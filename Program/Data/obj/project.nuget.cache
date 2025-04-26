@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "nVqJoN6/mdk=",
+  "dgSpecHash": "CN67cSM5TLM=",
   "success": true,
   "projectFilePath": "D:\\Desktop\\wspolbiegi\\Program\\Data\\Data.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Michael\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+  ],
   "logs": []
 }
