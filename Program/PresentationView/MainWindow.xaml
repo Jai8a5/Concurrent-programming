@@ -13,7 +13,7 @@
   </Window.DataContext>
   <StackPanel Width="Auto" Height="Auto">
     <StackPanel Orientation="Horizontal" Width="200" Height="42">
-      <Button x:Name="StartButton" Margin="0,0,10,0" Height="30" Width="85" Content="Start" Command="{Binding StartSimulation, Mode=TwoWay}"/>
+      <Button x:Name="StartButton" Margin="0,0,10,0" Height="30" Width="85" Content="Start" Command="{Binding StartSimulation, Mode=TwoWay}" Click="StartButton_Click"/>
       <TextBox x:Name="BallCountInputBox" Height="20" Width="80" IsEnabled="False" Text="{Binding BallCount, Mode=TwoWay}" />
       <StackPanel Orientation="Vertical" Width="20" Height="30" Margin="5,0,0,0">
         <Button x:Name="AddBallButton" Width="20" Height="15" Padding="0,-3,0,0" Command="{Binding AddBall, Mode=TwoWay}" Content="+"/>

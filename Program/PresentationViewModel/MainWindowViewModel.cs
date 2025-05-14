@@ -121,7 +121,7 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
         ModelLayer.Scale = value / 100;
         RaisePropertyChanged(nameof(TableSize));
       }
-    }
+    } 
 
     public void TableSizeChanged(object sender, SizeChangedEventArgs e)
     {

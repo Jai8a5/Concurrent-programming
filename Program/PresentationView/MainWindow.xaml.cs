@@ -29,5 +29,10 @@ namespace TP.ConcurrentProgramming.PresentationView
       if (DataContext is MainWindowViewModel viewModel)
         viewModel.TableSizeChanged(sender, e);
     }
-  }
+
+        private void StartButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+    }
 }

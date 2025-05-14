@@ -11,51 +11,51 @@
 
 namespace TP.ConcurrentProgramming.Data
 {
-  /// <summary>
-  ///  Two dimensions immutable vector
-  /// </summary>
-  internal record Vector : IVector
-  {
-    #region IVector
-
     /// <summary>
-    /// The X component of the vector.
+    ///  Two dimensions immutable vector
     /// </summary>
-    public double x { get; init; }
-    /// <summary>
-    /// The Y component of the vector.
-    /// </summary>
-    public double y { get; init; }
-
-    #endregion IVector
-
-    /// <summary>
-    /// Creates new instance of <seealso cref="Vector"/> and initialize all properties
-    /// </summary>
-    public Vector(double XComponent, double YComponent)
+    internal record Vector : IVector
     {
-      x = XComponent;
-      y = YComponent;
-    }
+        #region IVector
 
-    public static Vector operator +(Vector a, Vector b)
-    {
-      return new Vector(a.x + b.x, a.y + b.y);
-    }
+        /// <summary>
+        /// The X component of the vector.
+        /// </summary>
+        public double x { get; init; }
+        /// <summary>
+        /// The Y component of the vector.
+        /// </summary>
+        public double y { get; init; }
 
-    public static Vector operator -(Vector a, Vector b)
-    {
-      return new Vector(a.x - b.x, a.y - b.y);
-    }
+        #endregion IVector
 
-    public static Vector operator *(Vector vec, float scale)
-    {
-      return new Vector(vec.x * scale, vec.y * scale);
-    }
+        /// <summary>
+        /// Creates new instance of <seealso cref="Vector"/> and initialize all properties
+        /// </summary>
+        public Vector(double XComponent, double YComponent)
+        {
+            x = XComponent;
+            y = YComponent;
+        }
 
-    public static Vector operator /(Vector vec, float scale)
-    {
-      return new Vector(vec.x / scale, vec.y / scale);
+        public IVector Add(IVector other)
+        {
+            return new Vector(this.x + other.x, this.y + other.y);
+        }
+
+        public IVector Subtract(IVector other)
+        {
+            return new Vector(this.x - other.x, this.y - other.y);
+        }
+
+        public IVector Multiply(float scale)
+        {
+            return new Vector(this.x * scale, this.y * scale);
+        }
+
+        public IVector Divide(float scale)
+        {
+            return new Vector(this.x / scale, this.y / scale);
+        }
     }
-  }
 }

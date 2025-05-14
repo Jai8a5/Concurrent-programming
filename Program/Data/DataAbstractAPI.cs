@@ -10,59 +10,95 @@
 
 namespace TP.ConcurrentProgramming.Data
 {
-  public abstract class DataAbstractAPI : IDisposable
-  {
-    #region Layer Factory
-
-    public static DataAbstractAPI GetDataLayer()
+    public abstract class DataAbstractAPI : IDisposable
     {
-      return modelInstance.Value;
+        #region Layer Factory
+
+        public static DataAbstractAPI GetDataLayer()
+        {
+            return modelInstance.Value;
+        }
+
+        #endregion Layer Factory
+
+        #region public API
+
+        public abstract void Start(int numberOfBalls, int frameTime, Action<IVector, IBall> ballCreationHandler, Action<IBall> ballRemovalHandler);
+
+        public abstract void EndSimulation();
+        public abstract void AddBall();
+        public abstract void RemoveBall();
+
+        public abstract SimulationParameters SimulationParameters { get; }
+
+        #endregion public API
+
+        #region IDisposable
+
+        public abstract void Dispose();
+
+        #endregion IDisposable
+
+        #region private
+
+        private static Lazy<DataAbstractAPI> modelInstance = new Lazy<DataAbstractAPI>(() => new DataImplementation());
+
+        #endregion private
     }
 
-    #endregion Layer Factory
+    public interface IVector
+    {
+        /// <summary>
+        /// The X component of the vector.
+        /// </summary>
+        double x { get; init; }
 
-    #region public API
+        /// <summary>
+        /// The y component of the vector.
+        /// </summary>
+        double y { get; init; }
 
-    public abstract void Start(int numberOfBalls, Action<IVector, IBall> ballCreationHandler, Action<IBall> ballRemovalHandler);
+        IVector Add(IVector other);
+        IVector Subtract(IVector other);
+        IVector Multiply(float scale);
+        IVector Divide(float scale);
 
-    public abstract void EndSimulation();
-    public abstract void AddBall();
-    public abstract void RemoveBall();
+        public static IVector operator +(IVector a, IVector b) => a.Add(b);
+        public static IVector operator -(IVector a, IVector b) => a.Subtract(b);
+        public static IVector operator *(IVector vec, float scale) => vec.Multiply(scale);
+        public static IVector operator /(IVector vec, float scale) => vec.Divide(scale);
 
-    #endregion public API
+        public static double Dot(IVector a, IVector b)
+        {
+            return a.x * b.x + a.y * b.y;
+        }
 
-    #region IDisposable
+        public static IVector Reflect(IVector d, IVector n)
+        {
+            return d - (n * 2 * (float)Dot(d, n));
+        }
 
-    public abstract void Dispose();
+        public double Length()
+        {
+            return Math.Sqrt(this.x * this.x + this.y * this.y);
+        }
 
-    #endregion IDisposable
+        public IVector Normalize()
+        {
+            return this.Divide((float)Length());
+        }
+    }
 
-    #region private
+    public interface IBall
+    {
+        event EventHandler<IVector> NewPositionNotification;
 
-    private static Lazy<DataAbstractAPI> modelInstance = new Lazy<DataAbstractAPI>(() => new DataImplementation());
+        IVector Velocity { get; set; }
 
-    #endregion private
-  }
+        double Diameter { get; init; }
+    }
 
-  public interface IVector
-  {
-    /// <summary>
-    /// The X component of the vector.
-    /// </summary>
-    double x { get; init; }
+    public record SimulationParameters(int frameTime, float tableSize);
 
-    /// <summary>
-    /// The y component of the vector.
-    /// </summary>
-    double y { get; init; }
-  }
-
-  public interface IBall
-  {
-    event EventHandler<IVector> NewPositionNotification;
-
-    IVector Velocity { get; set; }
-
-    double Diameter { get; init; }
-  }
+    public record CollisionEvent(int time, IVector normal, IBall? otherBall);
 }

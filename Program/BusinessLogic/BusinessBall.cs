@@ -8,28 +8,57 @@
 //
 //_____________________________________________________________________________________________________________________________________
 
+using TP.ConcurrentProgramming.Data;
+
 namespace TP.ConcurrentProgramming.BusinessLogic
 {
-  internal class Ball : IBall
-  {
-    public Ball(Data.IBall ball)
+    internal class Ball : IBall
     {
-      ball.NewPositionNotification += RaisePositionChangeEvent;
+        public Ball(Data.IBall ball)
+        {
+            ball.NewPositionNotification += RaisePositionChangeEvent;
+
+            this.dataBall = ball;
+            Position = new Position(0, 0);
+        }
+
+        #region IBall
+
+        public event EventHandler<IPosition>? NewPositionNotification;
+
+        #endregion IBall
+
+        #region internal
+
+        internal Data.IBall dataBall;
+        internal IPosition Position;
+        public double Radius => this.dataBall.Diameter / 2;
+        public IVector Velocity
+        {
+            get => this.dataBall.Velocity;
+            set => this.dataBall.Velocity = value;
+        }
+
+        #endregion internal
+
+        #region private
+
+        private void RaisePositionChangeEvent(object? sender, Data.IVector e)
+        {
+            BusinessVector delta = new BusinessVector(e.x - Position.x, e.y - Position.y);
+
+            Position = new Position(e.x, e.y);
+
+            BusinessLogicAbstractAPI.GetBusinessLogicLayer().ApplyCollision(new BallMovement(this, delta));
+
+            NewPositionNotification?.Invoke(this, Position);
+        }
+
+        internal void Reflect(IVector normal)
+        {
+            this.dataBall.Velocity = IVector.Reflect(this.dataBall.Velocity, normal);
+        }
+
+        #endregion private
     }
-
-    #region IBall
-
-    public event EventHandler<IPosition>? NewPositionNotification;
-
-    #endregion IBall
-
-    #region private
-
-    private void RaisePositionChangeEvent(object? sender, Data.IVector e)
-    {
-      NewPositionNotification?.Invoke(this, new Position(e.x, e.y));
-    }
-
-    #endregion private
-  }
 }
