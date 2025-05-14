@@ -49,48 +49,51 @@ namespace TP.ConcurrentProgramming.Presentation.Model.Test
       }
     }
 
-    #region testing instrumentation
+        private class UnderneathLayerFixture : BusinessLogicAbstractAPI
+        {
+            #region testing instrumentation
 
-    private class UnderneathLayerFixture : BusinessLogicAbstractAPI
-    {
-      #region testing instrumentation
+            internal bool Disposed = false;
+            internal int NumberOfBalls = 0;
 
-      internal bool Disposed = false;
-      internal int NumberOfBalls = 0;
+            public override void AddBall()
+            {
+                throw new NotImplementedException();
+            }
 
-      public override void AddBall()
-      {
-        throw new NotImplementedException();
-      }
+            #endregion testing instrumentation
 
-      #endregion testing instrumentation
+            #region BusinessLogicAbstractAPI
 
-      #region BusinessLogicAbstractAPI
+            public override void Dispose()
+            {
+                Disposed = true;
+            }
 
-      public override void Dispose()
-      {
-        Disposed = true;
-      }
+            public override void RemoveBall()
+            {
+                throw new NotImplementedException();
+            }
 
-      public override void RemoveBall()
-      {
-        throw new NotImplementedException();
-      }
+            public override void Start(int numberOfBalls, Action<IPosition, BusinessLogic.IBall> upperLayerBallAdditionHandler, Action<BusinessLogic.IBall> upperLayerBallRemovalHandler)
+            {
+                NumberOfBalls = numberOfBalls;
+                Assert.IsNotNull(upperLayerBallAdditionHandler);
+                Assert.IsNotNull(upperLayerBallRemovalHandler);
+            }
 
-      public override void Start(int numberOfBalls, Action<IPosition, BusinessLogic.IBall> upperLayerBallAdditionHandler, Action<BusinessLogic.IBall> upperLayerBallRemovalHandler)
-      {
-        NumberOfBalls = numberOfBalls;
-        Assert.IsNotNull(upperLayerBallAdditionHandler);
-        Assert.IsNotNull(upperLayerBallRemovalHandler);
-      }
+            public override void Stop()
+            {
+                throw new NotImplementedException();
+            }
 
-      public override void Stop()
-      {
-        throw new NotImplementedException();
-      }
+            public override void ApplyCollision(BallMovement movement)
+            {
+                throw new NotImplementedException();
+            }
 
-      #endregion BusinessLogicAbstractAPI
-    }
+           
+        }
 
     #endregion testing instrumentation
   }
