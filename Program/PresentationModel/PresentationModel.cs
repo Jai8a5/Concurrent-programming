@@ -102,7 +102,7 @@ namespace TP.ConcurrentProgramming.Presentation.Model
 
     private void BallAdditionHandler(BusinessLogic.IPosition position, BusinessLogic.IBall ball)
     {
-      ModelBall newBall = new ModelBall(position.x, position.y, ball) { Diameter = 5, Scale = _Scale };
+      ModelBall newBall = new ModelBall(position.x, position.y, ball) { Diameter = 8, Scale = _Scale };
       BallChanged.Invoke(this, new BallChangeEventArgs() { Ball = newBall });
     }
 
