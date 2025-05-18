@@ -13,8 +13,6 @@ using System.Diagnostics;
 using TP.ConcurrentProgramming.Data;
 using UnderneathLayerAPI = TP.ConcurrentProgramming.Data.DataAbstractAPI;
 
-
-
 namespace TP.ConcurrentProgramming.BusinessLogic
 {
     internal class BusinessLogicImplementation : BusinessLogicAbstractAPI
@@ -80,6 +78,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         {
             layerBelow.AddBall();
         }
+
         public override void RemoveBall()
         {
             layerBelow.RemoveBall();
@@ -87,7 +86,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
         public override void ApplyCollision(BallMovement movement)
         {
-            lock (balls)
+            lock (ballListLock)
             {
                 var ball = (Ball)movement.ball;
                 var currentVel = ball.Velocity;
@@ -128,7 +127,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                       vbx = candidate.Velocity.x,
                       vby = candidate.Velocity.y;
 
-                    // Yeah, make sense of that
+                    // xd
                     double
                       a = vax * vax - 2 * vax * vbx + vbx * vbx + vay * vay - 2 * vay * vby + vby * vby,
                       b = 2 * (ax * vax - bx * vax - ax * vbx + bx * vbx + ay * vay - by * vay - ay * vby + by * vby),
@@ -178,7 +177,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
         private readonly List<Ball> balls = new List<Ball>();
         private readonly object ballListLock = new object();
-
 
         #endregion private
 
