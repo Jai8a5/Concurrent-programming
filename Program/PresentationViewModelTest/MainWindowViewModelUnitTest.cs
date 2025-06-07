@@ -84,11 +84,18 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel.Test
 
             public override bool Running => false;
 
-            private float _scale = 1.0f;
-            public override float Scale
+            private double _scale = 1.0f;
+            public override double Scale
             {
                 get => _scale;
                 set => _scale = value;
+            }
+
+            private double _tableSize = 100.0; // Default value for TableSize
+            public override double TableSize
+            {
+                get => _tableSize;
+                set => _tableSize = value;
             }
 
             public override void Dispose()
@@ -103,7 +110,7 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel.Test
 
             public override void Stop()
             {
-                
+
             }
 
             public override IDisposable Subscribe(IObserver<IBall> observer)
@@ -125,111 +132,127 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel.Test
 
 
 
+
         private class ModelSimulatorFixture : ModelAbstractApi
-{
-    #region Testing indicators
-
-    internal bool Disposed = false;
-
-    #endregion
-
-    #region ctor
-
-    public ModelSimulatorFixture()
-    {
-        eventObservable = Observable.FromEventPattern<BallChangeEventArgs>(this, nameof(BallChanged));
-    }
-
-    #endregion
-
-    #region ModelAbstractApi implementation
-
-    private ObservableCollection<IBall> balls = new();
-    public override ObservableCollection<IBall> Balls => balls;
-
-    private int ballCount = 0;
-    public override int CurrentBallsCount
-    {
-        get => ballCount;
-        set => ballCount = value;
-    }
-
-    public override bool Running => true;
-
-    private float _scale = 1.0f;
-    public override float Scale
-    {
-        get => _scale;
-        set => _scale = value;
-    }
-
-    public override void Start(int numberOfBalls)
-    {
-        balls.Clear();
-        for (int i = 0; i < numberOfBalls; i++)
         {
-            var newBall = new ModelBall(0, 0);
-            balls.Add(newBall);
-            BallChanged?.Invoke(this, new BallChangeEventArgs { Ball = newBall });
+            #region Testing indicators
+
+            internal bool Disposed = false;
+
+            #endregion
+
+            #region ctor
+
+            public ModelSimulatorFixture()
+            {
+                eventObservable = Observable.FromEventPattern<BallChangeEventArgs>(this, nameof(BallChanged));
+            }
+
+            #endregion
+
+            #region ModelAbstractApi implementation
+
+            private ObservableCollection<IBall> balls = new();
+            public override ObservableCollection<IBall> Balls => balls;
+
+            private int ballCount = 0;
+            public override int CurrentBallsCount
+            {
+                get => ballCount;
+                set => ballCount = value;
+            }
+
+            public override bool Running => true;
+
+            private double _scale = 1.0f;
+            public override double Scale
+            {
+                get => _scale;
+                set => _scale = value;
+            }
+
+            private double _tableSize = 100.0; // Default value for TableSize
+            public override double TableSize
+            {
+                get => _tableSize;
+                set => _tableSize = value;
+            }
+
+            public override void Start(int numberOfBalls)
+            {
+                balls.Clear();
+                for (int i = 0; i < numberOfBalls; i++)
+                {
+                    var newBall = new ModelBall(0, 0);
+                    balls.Add(newBall);
+                    BallChanged?.Invoke(this, new BallChangeEventArgs { Ball = newBall });
+                }
+
+                ballCount = numberOfBalls;
+            }
+
+            public override void Stop()
+            {
+                balls.Clear();
+                ballCount = 0;
+            }
+
+            public override void Dispose()
+            {
+                Disposed = true;
+                Stop();
+            }
+
+            public override IDisposable? Subscribe(IObserver<IBall> observer)
+            {
+                return eventObservable?.Subscribe(
+                    x => observer.OnNext(x.EventArgs.Ball),
+                    ex => observer.OnError(ex),
+                    () => observer.OnCompleted()
+                );
+            }
+
+            #endregion
+
+            #region Event & support
+
+            public event EventHandler<BallChangeEventArgs>? BallChanged;
+
+            private IObservable<EventPattern<BallChangeEventArgs>>? eventObservable;
+
+            private class ModelBall : IBall
+            {
+                public ModelBall(double top, double left)
+                {
+                    Top = top;
+                    Left = left;
+                }
+
+                public double Top { get; private set; }
+                public double Left { get; private set; }
+                public double Diameter => 10.0;
+                public double Scale { get; set; } = 1.0;
+
+                public event PropertyChangedEventHandler? PropertyChanged;
+
+                public void UpdateScale()
+                {
+                    Scale *= 1.1; 
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Scale)));
+                }
+            }
+
+
+            public class BallChangeEventArgs : EventArgs
+            {
+                public IBall Ball { get; set; } = default!;
+            }
+
+            #endregion
         }
 
-        ballCount = numberOfBalls;
+
+
+        #endregion testing infrastructure
     }
-
-    public override void Stop()
-    {
-        balls.Clear();
-        ballCount = 0;
-    }
-
-    public override void Dispose()
-    {
-        Disposed = true;
-        Stop();
-    }
-
-    public override IDisposable? Subscribe(IObserver<IBall> observer)
-    {
-        return eventObservable?.Subscribe(
-            x => observer.OnNext(x.EventArgs.Ball),
-            ex => observer.OnError(ex),
-            () => observer.OnCompleted()
-        );
-    }
-
-    #endregion
-
-    #region Event & support
-
-    public event EventHandler<BallChangeEventArgs>? BallChanged;
-
-    private IObservable<EventPattern<BallChangeEventArgs>>? eventObservable;
-
-    private class ModelBall : IBall
-    {
-        public ModelBall(double top, double left)
-        {
-            Top = top;
-            Left = left;
-        }
-
-        public double Top { get; private set; }
-        public double Left { get; private set; }
-        public double Diameter => 10.0;
-        public double Scale { get; set; } = 1.0;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-    }
-
-    public class BallChangeEventArgs : EventArgs
-    {
-        public IBall Ball { get; set; } = default!;
-    }
-
-    #endregion
-}
-
-
-    #endregion testing infrastructure
-  }
 }

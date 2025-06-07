@@ -128,7 +128,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             vbx = candidate.Velocity.x,
             vby = candidate.Velocity.y;
 
-          // Yeah, make sense of that
+          //xd
           double
             a = vax * vax - 2 * vax * vbx + vbx * vbx + vay * vay - 2 * vay * vby + vby * vby,
             b = 2 * (ax * vax - bx * vax - ax * vbx + bx * vbx + ay * vay - by * vay - ay * vby + by * vby),
