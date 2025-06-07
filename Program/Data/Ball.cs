@@ -10,64 +10,68 @@
 
 namespace TP.ConcurrentProgramming.Data
 {
-    internal class Ball : IBall
+  internal class Ball : IBall
+  {
+    #region ctor
+    private static int _globalId = 0;
+    public int Id { get; }
+
+
+    internal Ball(Vector initialPosition, Vector initialVelocity, double initialDiameter = 10)
     {
-        #region ctor
+      Id = Interlocked.Increment(ref _globalId);
+      PositionBackingField = initialPosition;
+      Velocity = initialVelocity;
+      DiameterBackingField = initialDiameter;
+    }
 
-        internal Ball(Vector initialPosition, Vector initialVelocity, double initialDiameter = 10)
-        {
-            PositionBackingField = initialPosition;
-            Velocity = initialVelocity;
-            DiameterBackingField = initialDiameter;
-        }
+    #endregion ctor
 
-        #endregion ctor
+    #region IBall
 
-        #region IBall
+    public event EventHandler<IVector>? NewPositionNotification;
 
-        public event EventHandler<IVector>? NewPositionNotification;
+    public IVector Velocity { get; set; }
 
-        public IVector Velocity { get; set; }
+    public double Diameter
+    {
+      get => DiameterBackingField;
+      init => DiameterBackingField = value;
+    }
 
-        public double Diameter
-        {
-            get => DiameterBackingField;
-            init => DiameterBackingField = value;
-        }
+    public double Radius
+    {
+      get => DiameterBackingField / 2;
+      init => DiameterBackingField = value * 2;
+    }
 
-        public double Radius
-        {
-            get => DiameterBackingField / 2;
-            init => DiameterBackingField = value * 2;
-        }
+    #endregion IBall
 
-        #endregion IBall
+    #region internal
 
-        #region internal
+    internal IVector Position
+    {
+      get => PositionBackingField;
+    }
 
-        internal IVector Position
-        {
-            get => PositionBackingField;
-        }
+    internal void Move(float deltaTime)
+    {
+      PositionBackingField = PositionBackingField + this.Velocity * deltaTime;
 
-        internal void Move(float deltaTime)
-        {
-            PositionBackingField = PositionBackingField + this.Velocity * deltaTime;
+      RaiseNewPositionChangeNotification();
+    }
 
-            RaiseNewPositionChangeNotification();
-        }
+    #endregion internal
 
-        #endregion internal
+    #region private
 
-        #region private
+    private IVector PositionBackingField;
+    private double DiameterBackingField;
 
-        private IVector PositionBackingField;
-        private double DiameterBackingField;
-
-        private void RaiseNewPositionChangeNotification()
-        {
-            NewPositionNotification?.Invoke(this, PositionBackingField);
-        }
+    private void RaiseNewPositionChangeNotification()
+    {
+      NewPositionNotification?.Invoke(this, PositionBackingField);
+    }
 
 
 

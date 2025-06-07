@@ -7,6 +7,7 @@
 //  https://github.com/mpostol/TP/discussions/182
 //__________________________________________________________________________________________
 
+using System;
 using System.Windows;
 using TP.ConcurrentProgramming.Presentation.ViewModel;
 
@@ -30,9 +31,13 @@ namespace TP.ConcurrentProgramming.PresentationView
         viewModel.TableSizeChanged(sender, e);
     }
 
-        private void StartButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
+    private void Window_Closed(object sender, EventArgs e)
+    {
+      if (DataContext is MainWindowViewModel viewModel)
+      {
+        viewModel.Stop();
+        viewModel.Dispose();
+      }
     }
+  }
 }

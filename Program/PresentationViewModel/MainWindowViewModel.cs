@@ -78,6 +78,8 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
     {
       if (Disposed)
         throw new ObjectDisposedException(nameof(MainWindowViewModel));
+
+      ModelLayer.Stop();
     }
 
     public void ExecuteAddBall(object? param)
@@ -114,14 +116,14 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
       return ModelLayer != null && ModelLayer.CurrentBallsCount > 0 && !ModelLayer.Running;
     }
 
-    public float TableSize {
-      get { return 100 * ModelLayer.Scale; }
+    public double TableSize {
+      get => ModelLayer.TableSize;
       set 
       {
-        ModelLayer.Scale = value / 100;
+        ModelLayer.TableSize = value;
         RaisePropertyChanged(nameof(TableSize));
       }
-    } 
+    }
 
     public void TableSizeChanged(object sender, SizeChangedEventArgs e)
     {
@@ -136,7 +138,7 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
     {
       if (Disposed)
         throw new ObjectDisposedException(nameof(MainWindowViewModel));
-      Observer = ModelLayer.Subscribe<ModelIBall>(ball => Balls.Add(ball));
+      Observer = ModelLayer.Subscribe<ModelIBall>(Balls.Add);
     }
     #endregion public API
 

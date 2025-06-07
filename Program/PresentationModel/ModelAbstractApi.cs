@@ -15,49 +15,53 @@ using Newtonsoft.Json.Linq;
 
 namespace TP.ConcurrentProgramming.Presentation.Model
 {
-  public interface IBall : INotifyPropertyChanged
-  {
-    double Top { get; }
-    double Left { get; }
-    double Diameter { get; }
-    double Scale { get; set; }
-  }
-
-  public abstract class ModelAbstractApi : IObservable<IBall>, IDisposable
-  {
-    public static ModelAbstractApi CreateModel()
+    public interface IBall : INotifyPropertyChanged
     {
-      return modelInstance.Value;
+        double Top { get; }
+        double Left { get; }
+        double Diameter { get; }
+
+        void UpdateScale();
     }
 
-    public abstract void Start(int numberOfBalls);
+    public delegate void ScaleChangeHandler(double newScale);
 
-    public abstract void Stop();
+    public abstract class ModelAbstractApi : IObservable<IBall>, IDisposable
+    {
+        public static ModelAbstractApi CreateModel()
+        {
+            return modelInstance.Value;
+        }
 
-    public abstract int CurrentBallsCount { get; set; }
+        public abstract void Start(int numberOfBalls);
 
-    public abstract bool Running { get; }
+        public abstract void Stop();
 
-    public abstract float Scale { get; set; }
+        public abstract int CurrentBallsCount { get; set; }
 
-    public abstract ObservableCollection<IBall> Balls { get; }
+        public abstract bool Running { get; }
 
-    #region IObservable
+        public abstract double TableSize { get; set; }
+        public abstract double Scale { get; set; }
 
-    public abstract IDisposable Subscribe(IObserver<IBall> observer);
+        public abstract ObservableCollection<IBall> Balls { get; }
 
-    #endregion IObservable
+        #region IObservable
 
-    #region IDisposable
+        public abstract IDisposable Subscribe(IObserver<IBall> observer);
 
-    public abstract void Dispose();
+        #endregion IObservable
 
-    #endregion IDisposable
+        #region IDisposable
 
-    #region private
+        public abstract void Dispose();
 
-    private static Lazy<ModelAbstractApi> modelInstance = new Lazy<ModelAbstractApi>(() => new ModelImplementation());
+        #endregion IDisposable
 
-    #endregion private
-  }
+        #region private
+
+        private static Lazy<ModelAbstractApi> modelInstance = new Lazy<ModelAbstractApi>(() => new ModelImplementation());
+
+        #endregion private
+    }
 }
